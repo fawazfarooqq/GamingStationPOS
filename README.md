@@ -1,67 +1,73 @@
-# GamingStation — Full-Stack Gaming Center POS
+# GamingStation POS
 
-A college-project-friendly, full-stack POS system for a gaming station / gaming cafe.
+GamingStation POS is a full-stack Point of Sale and business management system I built for my uncle's gaming center located at Podium Mall, Tolichowki, Hyderabad.
 
-## Features
+The system is designed to be used as the shop's day-to-day operational software rather than as a simple demonstration project. It centralizes gaming-session management, automated billing, customer records, inventory, product sales, payments, expenses, and business reporting into a single dashboard.
 
-- 10 managed stations: PS5, PS4, Pool and Tennis tables
-- Start/stop timed gaming sessions
-- Automatic duration and billing
-- Customer name + mobile capture
-- Product / snack inventory
-- Cart and product sales
-- Session + product combined checkout
-- Multiple payment methods: Cash, UPI, Card
-- Customers / CRM
-- Expenses
-- Daily dashboard metrics
-- Revenue and station utilization reports
-- CSV export
-- Product stock tracking and low-stock alerts
-- Session history
-- Search/filterable transactions
-- Settings for station rates and business name
-- SQLite persistence through Flask backend
+## What It Handles
+
+- Gaming station management
+- Real-time gaming session tracking
+- Automatic session billing
+- Customer registration and CRM
+- Food and beverage/product sales
+- Shopping cart and POS checkout
+- Cash, UPI and card payment recording
+- Inventory and stock management
+- Low-stock alerts
+- Expense tracking
+- Revenue and business analytics
+- Session and sales history
+- CSV transaction exports
+- Configurable station pricing
+- Persistent SQLite database
+- REST API backend
+- Responsive management dashboard
+
+## Purpose
+
+The goal of GamingStation POS is to replace manual tracking and separate spreadsheets with a centralized system that can be used by the gaming center to manage its daily operations.
+
+I designed and developed the system around the actual workflow of the business, including timed gaming sessions, station availability, customer information, automatic billing, product sales and operational reporting.
+
+## Technology
+
+- Python
+- Flask
+- SQLite
 - REST API
-- Responsive dark neon UI
-- Automated backend tests
+- JavaScript
+- Tailwind CSS
+- Chart.js
+- Docker
+- Pytest
 
-## Run locally
+## Architecture
 
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
-
-Open:
-
-http://127.0.0.1:5000
-
-## Test
-
-```powershell
-pytest -q
-```
-
-## Project structure
+The application uses a Flask backend with SQLite for persistent business data and a JavaScript-based web dashboard for the POS and management interface.
 
 ```text
-GamingStation-POS/
-├── app.py
-├── requirements.txt
-├── README.md
-├── app/
-│   ├── db.py
-│   ├── services.py
-│   ├── templates/index.html
-│   └── static/app.js
-├── data/
-└── tests/
-    └── test_api.py
-```
-
-## Notes
-
-This is a local POS prototype. It is designed to demonstrate a complete software project with persistent data and a REST API. For production deployment, add authentication/authorization, database backups, audit logs, HTTPS, printer/payment-terminal integration, and stronger validation.
+GamingStation POS
+│
+├── POS Dashboard
+│   ├── Gaming Sessions
+│   ├── Product Sales
+│   └── Checkout
+│
+├── Business Management
+│   ├── Customers
+│   ├── Inventory
+│   ├── Expenses
+│   └── Reports
+│
+├── Backend
+│   ├── REST API
+│   ├── Billing Logic
+│   └── Database Layer
+│
+└── Database
+    ├── Sessions
+    ├── Customers
+    ├── Products
+    ├── Sales
+    └── Expenses
