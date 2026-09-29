@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GamingStation | Pro POS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--neon:#39ff14;--bg:#050505;--card:#111;--muted:#777}
+body{background:var(--bg);color:#fff;font-family:Inter,sans-serif}
+.orbitron{font-family:Orbitron,sans-serif}.neon{color:var(--neon)}.card{background:#111;border:1px solid #252525;border-radius:22px}
+.nav{color:#777;font-weight:800;cursor:pointer}.nav.active{color:var(--neon);border-bottom:2px solid var(--neon)}
+input,select{background:#202020!important;color:#eee!important;border:1px solid #333!important}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#333;border-radius:10px}
+</style>
+</head>
+<body class="min-h-screen">
+<header class="sticky top-0 z-40 bg-black/90 backdrop-blur border-b border-white/10">
+<div class="max-w-[1800px] mx-auto px-6 py-4 flex flex-wrap gap-5 items-center justify-between">
+<div><div class="orbitron text-2xl font-black">GAMING<span class="font-normal">STATION</span></div><div class="text-[10px] tracking-[4px] text-zinc-600">PRO POS CONTROL CENTER</div></div>
+<div class="flex gap-5 text-xs uppercase tracking-widest">
+<span class="nav active px-2 py-3" data-view="dashboard">Dashboard</span><span class="nav px-2 py-3" data-view="pos">POS</span><span class="nav px-2 py-3" data-view="inventory">Inventory</span><span class="nav px-2 py-3" data-view="customers">Customers</span><span class="nav px-2 py-3" data-view="reports">Reports</span><span class="nav px-2 py-3" data-view="settings">Settings</span>
+</div>
+<div class="flex gap-3 items-center"><span class="text-xs text-zinc-500">LIVE</span><span id="activeBadge" class="neon orbitron">0/10</span></div>
+</div>
+</header>
+
+<main class="max-w-[1800px] mx-auto p-6">
+<section id="dashboard" class="view space-y-6">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4" id="metrics"></div>
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="card p-5 lg:col-span-2"><div class="flex justify-between mb-5"><h2 class="orbitron text-sm">STATION CONTROL</h2><button onclick="refresh()" class="text-xs neon">REFRESH</button></div><div id="stations" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4"></div></div>
+<div class="card p-5"><h2 class="orbitron text-sm mb-4">REVENUE SNAPSHOT</h2><canvas id="revenueChart" height="230"></canvas></div>
+</div>
+<div class="grid lg:grid-cols-2 gap-6">
+<div class="card p-5"><h2 class="orbitron text-sm mb-4">RECENT SESSIONS</h2><div id="recentSessions" class="space-y-2"></div></div>
+<div class="card p-5"><h2 class="orbitron text-sm mb-4">LOW STOCK ALERTS</h2><div id="lowStock" class="space-y-2"></div></div>
+</div>
+</section>
+
+<section id="pos" class="view hidden space-y-6">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="card p-5 lg:col-span-2"><div class="flex justify-between items-center mb-4"><h2 class="orbitron">QUICK POS</h2><input id="productSearch" oninput="renderPOS()" class="rounded-lg p-2 text-sm" placeholder="Search products"></div><div id="productsGrid" class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div></div>
+<div class="card p-5"><h2 class="orbitron mb-4">CART</h2><div class="space-y-3"><input id="saleCustomer" class="w-full p-3 rounded-lg" placeholder="Customer name"><input id="salePhone" class="w-full p-3 rounded-lg" placeholder="Mobile"><div id="cart" class="space-y-2 max-h-72 overflow-auto"></div><div class="border-t border-white/10 pt-4 flex justify-between text-lg"><span>Total</span><b class="neon" id="cartTotal">₹0</b></div><select id="salePayment" class="w-full p-3 rounded-lg"><option>Cash</option><option>UPI</option><option>Card</option></select><button onclick="checkoutSale()" class="w-full bg-[#39ff14] text-black font-black p-3 rounded-lg">CHARGE CUSTOMER</button></div></div>
+</div>
+</section>
+
+<section id="inventory" class="view hidden space-y-6">
+<div class="card p-5"><div class="flex flex-wrap justify-between gap-3 mb-5"><h2 class="orbitron">INVENTORY MANAGEMENT</h2><button onclick="openProductForm()" class="bg-[#39ff14] text-black font-bold px-5 py-2 rounded-lg">+ ADD PRODUCT</button></div><div id="inventoryTable" class="overflow-auto"></div></div>
+</section>
+
+<section id="customers" class="view hidden space-y-6">
+<div class="card p-5"><h2 class="orbitron mb-5">CUSTOMER CRM</h2><div id="customersTable" class="overflow-auto"></div></div>
+</section>
+
+<section id="reports" class="view hidden space-y-6">
+<div class="flex flex-wrap justify-between gap-3"><h2 class="orbitron text-2xl">REPORTS & DATA</h2><a href="/api/export/transactions.csv" class="border border-white/10 px-5 py-3 rounded-lg text-xs font-bold">EXPORT CSV</a></div>
+<div class="grid lg:grid-cols-2 gap-6"><div class="card p-5"><h3 class="orbitron text-sm mb-4">SESSION HISTORY</h3><div id="sessionTable" class="overflow-auto"></div></div><div class="card p-5"><h3 class="orbitron text-sm mb-4">PRODUCT SALES</h3><div id="salesTable" class="overflow-auto"></div></div></div>
+<div class="card p-5"><h3 class="orbitron text-sm mb-4">EXPENSES</h3><div class="flex flex-wrap gap-2 mb-4"><input id="expCat" class="p-2 rounded" placeholder="Category"><input id="expDesc" class="p-2 rounded" placeholder="Description"><input id="expAmt" type="number" class="p-2 rounded" placeholder="Amount"><button onclick="addExpense()" class="bg-[#39ff14] text-black px-4 rounded font-bold">ADD</button></div><div id="expenseTable"></div></div>
+</section>
+
+<section id="settings" class="view hidden space-y-6">
+<div class="card p-5"><h2 class="orbitron mb-5">STATION RATES</h2><div id="settingsTable"></div></div>
+<div class="card p-5"><h2 class="orbitron mb-3">DEMO DATA</h2><p class="text-sm text-zinc-500 mb-4">Reset the local database to its default stations and inventory.</p><button onclick="resetDemo()" class="border border-red-500 text-red-400 px-5 py-2 rounded-lg">RESET DATABASE</button></div>
+</section>
+</main>
+
+<div id="modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50"><div class="card p-7 w-[min(95%,440px)]"><div id="modalContent"></div></div></div>
+<script src="/static/app.js"></script>
+</body></html>
